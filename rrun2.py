@@ -3,22 +3,19 @@ import pdfplumber
 import google.generativeai as genai
 import os
 
-
-
-def read_file(file_path):
-    """파일 형식에 따라 파일을 읽어오는 함수"""
+def read_file(file_object):
+    """파일 형식에 따라 파일 데이터를 읽어오는 함수"""
     try:
-        if file_path.endswith(".pdf"):
-            with pdfplumber.open(file_path) as pdf:
-                text = ""
-                for page in pdf.pages:
-                    page_text = page.extract_text()
-                    if page_text:
-                        text += page_text
-                return text
-        elif file_path.endswith(".txt"):
-            with open(file_path, "r", encoding="utf-8") as file:
-                return file.read()
+        if file_object.type == "application/pdf":
+            pdf = pdfplumber.open(file_object)
+            text = ""
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text
+            return text
+        elif file_object.type == "text/plain":
+            return file_object.read().decode("utf-8")
         else:
             st.error("지원하지 않는 파일 형식입니다. (.pdf 또는 .txt 파일을 선택해주세요)")
             return None
@@ -69,7 +66,7 @@ def main():
     st.title("문서 비교 도구 (Google Gemini)")
 
     # API 키 입력
-    api_key = "AIzaSyAhCIS9HnIln1DwgOWpI1HNU_QQgT40tWA" 
+    api_key = st.text_input("Google Gemini API 키:", type="password")
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -84,14 +81,17 @@ def main():
 
     # 비교 실행 버튼
     if st.button("비교 시작"):
+        if not api_key:
+            st.error("API 키를 먼저 입력하세요.")
+        else:
             try:
                 genai.configure(api_key=api_key)
                 model = genai.GenerativeModel('gemini-pro')
 
                 # 파일 또는 텍스트 입력 선택
                 if prior_file and later_file:
-                    prior_text = read_file(prior_file.name)
-                    later_text = read_file(later_file.name)
+                    prior_text = read_file(prior_file)  # 파일 객체 전달
+                    later_text = read_file(later_file)  # 파일 객체 전달
                 elif prior_text_input and later_text_input:
                     prior_text = prior_text_input
                     later_text = later_text_input
