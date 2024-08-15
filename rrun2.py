@@ -66,7 +66,7 @@ def main():
     st.title("문서 비교 도구 (Google Gemini)")
 
     # API 키 입력
-    api_key = st.text_input("Google Gemini API 키:", type="password")
+    api_key = "AIzaSyAhCIS9HnIln1DwgOWpI1HNU_QQgT40tWA"
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -81,9 +81,6 @@ def main():
 
     # 비교 실행 버튼
     if st.button("비교 시작"):
-        if not api_key:
-            st.error("API 키를 먼저 입력하세요.")
-        else:
             try:
                 genai.configure(api_key=api_key)
                 model = genai.GenerativeModel('gemini-pro')
