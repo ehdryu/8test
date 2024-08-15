@@ -66,7 +66,7 @@ def main():
     st.title("문서 비교 도구 (Google Gemini)")
 
     # API 키 입력
-    api_key = "AIzaSyAhCIS9HnIln1DwgOWpI1HNU_QQgT40tWA"
+    api_key = "잠시삭제"
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
