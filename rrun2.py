@@ -125,25 +125,8 @@ def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
     st.title("문서 비교 도구")
 
-    # 사용 방법 안내
-    st.markdown("""
-    ## 사용 방법:
-    1. 비교할 두 개의 파일을 업로드하거나 텍스트를 직접 입력합니다.
-    2. "비교 시작" 버튼을 클릭합니다.
-    3. 결과 창에서 두 문서의 유사도 분석 결과를 확인합니다.
-
-    ## 주의 사항:
-    * **초기 버전**: 현재 초기 버전이므로 오류가 발생할 수 있습니다.
-    * **이미지 인식 불가**: 화학식, 도면 등의 이미지는 인식하지 못할 수 있습니다. 텍스트 변환 후 사용하세요.
-    * **파일 크기 제한**: 외부 AI API를 이용하므로, 일정 용량 이상의 파일은 인식이 어려울 수 있습니다.
-    * **PDF 형식**: 스캔된 PDF 파일은 텍스트 추출이 제대로 되지 않을 수 있습니다. 
-    * **정확도**: AI 기반 분석 결과는 참고용이며, 법적/전문적인 판단을 대신할 수 없습니다. 
-    """)
-
     # API 키 입력
-    api_key = get_api_key()
-    if api_key is None:
-        return
+    api_key = get_api_key()  
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -161,8 +144,8 @@ def main():
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
-                prior_text = read_file(prior_file)
-                later_text = read_file(later_file)
+                prior_text = read_file(prior_file)  # 파일 객체 전달
+                later_text = read_file(later_file)  # 파일 객체 전달
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
                 later_text = later_text_input
@@ -173,15 +156,13 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리
             with st.spinner("텍스트 전처리 중..."):
-                processed_prior_text = preprocess_specification(prior_text, model)
-                processed_later_text = preprocess_claims(later_text, model)
+                processed_prior_text = process_text_with_gemini(prior_text, model)
+                processed_later_text = process_text_with_gemini(later_text, model)
 
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
@@ -193,6 +174,5 @@ def main():
 
         except Exception as e:
             st.error(f"오류 발생: {str(e)}")
-            
+
 if __name__ == "__main__":
-    main()
