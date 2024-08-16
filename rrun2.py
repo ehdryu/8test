@@ -81,10 +81,10 @@ def compare_texts(text1, text2, model):
 
         Similarity Scale:
         - Very High (90-100%): Almost identical content
-        - High (70-89%): Most key elements match
-        - Medium (50-69%): Some key elements match
-        - Low (30-49%): Few elements match
-        - Very Low (0-29%): Almost no match
+        - High (70-89%): Most key or some key elements match
+        - Medium (50-69%): Partial or Few elements match
+        - Low (30-49%): Almost no match
+        - Very Low (0-29%): no match
 
         For each claim, briefly explain the reasoning behind your similarity judgment.
         After completing the table, summarize the overall similarity analysis results.
