@@ -112,13 +112,13 @@ def compare_texts(text1, text2, model, temperature=0.1):
 
 def get_api_key():
     """사용자로부터 API 키 앞 2글자와 뒤 4글자를 입력받아 완성하는 함수"""
-    api_key_middle = "zaSy"  # API 키 중간 부분 (보안상 이 부분은 제거했습니다.)
-    user_input = st.text_input("API 키를 입력하세요:", type="password")
-    if len(user_input) != len(api_key_middle) + 6:
-        st.error("API 키를 정확하게 입력해야 합니다.")
+    api_key_middle = "zaSyBjhTX0EWpHXdvpYm9Dhk-fZFWLyU_"  # API 키 중간 부분
+    user_input = st.text_input("비밀번호 6글자를 입력하세요(대소문자 구분!):", type="password")
+    if len(user_input) != 6:
+        st.error("비밀번호를 정확하게 입력해야 합니다.")
         return None
     api_key_prefix = user_input[:2]  # 입력값에서 앞 2글자 추출
-    api_key_suffix = user_input[-4:]  # 입력값에서 뒤 4글자 추출
+    api_key_suffix = user_input[2:]  # 입력값에서 뒤 4글자 추출
     return api_key_prefix + api_key_middle + api_key_suffix
 
 def main():
@@ -142,8 +142,6 @@ def main():
 
     # API 키 입력
     api_key = get_api_key()
-    if api_key is None:
-        return
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -173,7 +171,7 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리
+            # 텍스트 전처리 (temperature=0.1 고정)
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = preprocess_specification(prior_text, model)
                 processed_later_text = preprocess_claims(later_text, model)
@@ -181,7 +179,7 @@ def main():
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행
+            # 비교 수행 (temperature=0.1 고정)
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
