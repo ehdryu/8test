@@ -24,7 +24,7 @@ def read_file(file_object):
         return None
 
 def process_text_with_gemini(text, model, instructions=""):
-    """Gemini API를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
+    """AI를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
     추가적인 지시 사항을 instructions에 입력할 수 있습니다.
     """
     try:
@@ -32,11 +32,11 @@ def process_text_with_gemini(text, model, instructions=""):
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        st.error(f"Gemini API를 사용한 텍스트 처리 중 오류 발생: {str(e)}")
+        st.error(f"AI를 사용한 텍스트 처리 중 오류 발생, 비밀번호가 정확한지 확인하고, 문서 양이 너무 큰지 확인해주세요: {str(e)}")
         return None
 
 def compare_texts(text1, text2, model):
-    """두 텍스트의 유사도를 Gemini API를 이용하여 비교하고 결과를 한글로 제공합니다."""
+    """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
     try:
         prompt = f"""
         Compare the following texts and evaluate the similarity.
@@ -49,7 +49,7 @@ def compare_texts(text1, text2, model):
         {text2}
 
         Result format:
-        | Claim | Included? | Similarity (Very High, High, Medium, Low, Very Low) |
+        | Later application claims | Included? | Similarity (Very High, High, Medium, Low, Very Low) |
         |---|---|---|
         | ...  | ...        | ...                                               |
         Summarize the result table.
@@ -58,7 +58,7 @@ def compare_texts(text1, text2, model):
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        st.error(f"Gemini API를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
+        st.error(f"AI를 사용한 텍스트 처리 중 오류 발생, 비밀번호가 정확한지 확인하고, 문서 양이 너무 큰지 확인해주세요: {str(e)}")
         return None
 
 
