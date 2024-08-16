@@ -49,11 +49,22 @@ def compare_texts(text1, text2, model):
         {text2}
 
         Result format:
-        | Later application claims | Included? | Similarity (Very High, High, Medium, Low, Very Low) |
-        |---|---|---|
-        | ...  | ...        | ...                                               |
-        Summarize the result table.
-        Please provide the results in Korean.
+        Please provide the results in the following table format (Please only display the claims from the text 2 in the table) :
+        | Claim Number | Included? | Similarity | Reasoning |
+        |--------------|-----------|------------|-----------|
+        | ...          | ...       | ...        | ...       |
+        
+        Similarity Scale:
+        - Very High (90-100%): Almost identical content
+        - High (70-89%): Most key elements match
+        - Medium (50-69%): Some key elements match
+        - Low (30-49%): Few elements match
+        - Very Low (0-29%): Almost no match
+        
+        For each claim, briefly explain the reasoning behind your similarity judgment.
+        After completing the table, summarize the overall similarity analysis results.
+        
+        Please provide all results in Korean.
         """
         response = model.generate_content(prompt)
         return response.text
