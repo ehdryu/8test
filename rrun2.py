@@ -23,6 +23,16 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
+def extract_claims(text):
+    """텍스트에서 청구항 부분만 추출하는 함수 (예시)"""
+    # 구체적인 로직은 특허 문서 형식에 따라 다르게 구현 필요
+    claims_start = text.find("청구항 1.")  
+    claims_end = text.find("명세서")  # 또는 다른 구분자 사용
+    if claims_start != -1 and claims_end != -1:
+        return text[claims_start:claims_end]
+    else:
+        return ""  # 또는 오류 처리
+
 def process_text_with_gemini(text, model, instructions=""):
     """AI를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
     추가적인 지시 사항을 instructions에 입력할 수 있습니다.
@@ -112,25 +122,26 @@ def main():
             if prior_file and later_file:
                 prior_text = read_file(prior_file)  # 파일 객체 전달
                 later_text = read_file(later_file)  # 파일 객체 전달
+                later_claims = extract_claims(later_text) # 두 번째 문서에서 청구항 추출
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
-                later_text = later_text_input
+                later_claims = extract_claims(later_text_input)
             else:
                 st.error("두 텍스트를 모두 입력하거나 파일을 업로드하세요.")
                 return
 
-            if prior_text is None or later_text is None:
+            if prior_text is None or later_claims is None:
                 return
 
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
-                processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
+                processed_later_claims = process_text_with_gemini(later_claims, model, additional_instructions)
 
-            if processed_prior_text is None or processed_later_text is None:
+            if processed_prior_text is None or processed_later_claims is None:
                 return
 
             with st.spinner("비교 중..."):
-                comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
+                comparison_result = compare_texts(processed_prior_text, processed_later_claims, model)
 
             if comparison_result is None:
                 return
