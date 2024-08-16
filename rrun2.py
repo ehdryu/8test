@@ -36,10 +36,7 @@ def preprocess_specification(text, model):
 
         ## Preprocessed Result:
         """
-        response = model.generate_content(
-            prompt,
-            temperature=temperature
-        )
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
         st.error(f"Error occurred while preprocessing specification text with AI: {str(e)}")
@@ -58,17 +55,14 @@ def preprocess_claims(text, model):
 
         ## Preprocessed Result:
         """
-        response = model.generate_content(
-            prompt,
-            temperature=temperature
-        )
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
         st.error(f"Error occurred while preprocessing claims text with AI: {str(e)}")
         return None
 
 def compare_texts(text1, text2, model):
-    """Compares two texts using AI and provides results in Korean."""
+    """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
     try:
         prompt = f"""
         Compare the following texts and evaluate the similarity.
@@ -97,10 +91,7 @@ def compare_texts(text1, text2, model):
 
         Please provide all results in Korean.
         """
-        response = model.generate_content(
-            prompt,
-            temperature=temperature
-        )
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
         st.error(f"AI를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
@@ -121,21 +112,6 @@ def get_api_key():
 def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
     st.title("문서 비교 도구")
-
-    # 사용 방법 안내
-    st.markdown("""
-    ## 사용 방법:
-    1. 비교할 두 개의 파일을 업로드하거나 텍스트를 직접 입력합니다.
-    2. "비교 시작" 버튼을 클릭합니다.
-    3. 결과 창에서 두 문서의 유사도 분석 결과를 확인합니다.
-
-    ## 주의 사항:
-    * **초기 버전**: 현재 초기 버전이므로 오류가 발생할 수 있습니다.
-    * **이미지 인식 불가**: 화학식, 도면 등의 이미지는 인식하지 못할 수 있습니다. 텍스트 변환 후 사용하세요.
-    * **파일 크기 제한**: 외부 AI API를 이용하므로, 일정 용량 이상의 파일은 인식이 어려울 수 있습니다.
-    * **PDF 형식**: 스캔된 PDF 파일은 텍스트 추출이 제대로 되지 않을 수 있습니다. 
-    * **정확도**: AI 기반 분석 결과는 참고용이며, 법적/전문적인 판단을 대신할 수 없습니다. 
-    """)
 
     # API 키 입력
     api_key = get_api_key()
@@ -168,7 +144,7 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리 
+            # 텍스트 전처리
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = preprocess_specification(prior_text, model)
                 processed_later_text = preprocess_claims(later_text, model)
@@ -176,7 +152,7 @@ def main():
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행 
+            # 비교 수행
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
