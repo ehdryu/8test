@@ -71,7 +71,7 @@ def get_api_key():
 
 def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
-    st.title("문서 비교 도구 (Google Gemini)")
+    st.title("문서 비교 도구")
 
     # API 키 입력
     api_key = get_api_key()  
