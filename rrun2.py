@@ -23,16 +23,6 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
-def extract_claims(text):
-    """텍스트에서 청구항 부분만 추출하는 함수 (예시)"""
-    # 구체적인 로직은 특허 문서 형식에 따라 다르게 구현 필요
-    claims_start = text.find("청구항 1.")  
-    claims_end = text.find("발명의 설명")  # 또는 다른 구분자 사용
-    if claims_start != -1 and claims_end != -1:
-        return text[claims_start:claims_end]
-    else:
-        return ""  # 또는 오류 처리
-
 def process_text_with_gemini(text, model, instructions=""):
     """AI를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
     추가적인 지시 사항을 instructions에 입력할 수 있습니다.
