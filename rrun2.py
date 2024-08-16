@@ -23,7 +23,7 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
-def preprocess_specification(text, model):
+def preprocess_specification(text, model, temperature=0.1):
     """Preprocesses specification text for comparison."""
     try:
         prompt = f"""Please remove any metadata from the following specification text, such as patent number, filing date, etc. 
@@ -36,13 +36,16 @@ def preprocess_specification(text, model):
 
         ## Preprocessed Result:
         """
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            temperature=temperature
+        )
         return response.text
     except Exception as e:
         st.error(f"Error occurred while preprocessing specification text with AI: {str(e)}")
         return None
 
-def preprocess_claims(text, model):
+def preprocess_claims(text, model, temperature=0.1):
     """Preprocesses claims text for comparison."""
     try:
         prompt = f"""For the following claims text, please extract each claim number. 
@@ -55,14 +58,17 @@ def preprocess_claims(text, model):
 
         ## Preprocessed Result:
         """
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            temperature=temperature
+        )
         return response.text
     except Exception as e:
         st.error(f"Error occurred while preprocessing claims text with AI: {str(e)}")
         return None
 
-def compare_texts(text1, text2, model):
-    """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
+def compare_texts(text1, text2, model, temperature=0.1):
+    """Compares two texts using AI and provides results in Korean."""
     try:
         prompt = f"""
         Compare the following texts and evaluate the similarity.
@@ -91,7 +97,10 @@ def compare_texts(text1, text2, model):
 
         Please provide all results in Korean.
         """
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            temperature=temperature
+        )
         return response.text
     except Exception as e:
         st.error(f"AI를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
@@ -127,6 +136,7 @@ def main():
     * **PDF 형식**: 스캔된 PDF 파일은 텍스트 추출이 제대로 되지 않을 수 있습니다. 
     * **정확도**: AI 기반 분석 결과는 참고용이며, 법적/전문적인 판단을 대신할 수 없습니다. 
     """)
+
     # API 키 입력
     api_key = get_api_key()
 
@@ -158,7 +168,7 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리
+            # 텍스트 전처리 (temperature=0.1 고정)
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = preprocess_specification(prior_text, model)
                 processed_later_text = preprocess_claims(later_text, model)
@@ -166,7 +176,7 @@ def main():
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행
+            # 비교 수행 (temperature=0.1 고정)
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
