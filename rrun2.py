@@ -23,54 +23,20 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
-def preprocess_specification(text, model, temperature=0.1):
-    """Preprocesses specification text for comparison."""
+def process_text_with_gemini(text, model, temperature=0.1, instructions=""):
+    """AI를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
+    추가적인 지시 사항을 instructions에 입력할 수 있습니다.
+    """
     try:
-        prompt = f"""Please remove any metadata from the following specification text, such as patent number, filing date, etc. 
-        Then, segment the text into sentences, extract important keywords, and remove unnecessary sentences like background information to make it suitable for comparison.
-
-        ## Specification Text:
-        ```
-        {text}
-        ```
-
-        ## Preprocessed Result:
-        """
-        generation_config = genai.GenerationConfig(temperature=temperature)
-        response = model.generate_content(
-            prompt,
-            generation_config=generation_config
-        )
+        prompt = f"{instructions}\n\nPlease preprocess the following text into a suitable format for comparison:\n\n{text}"
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        st.error(f"Error occurred while preprocessing specification text with AI: {str(e)}")
-        return None
-
-def preprocess_claims(text, model, temperature=0.1):
-    """Preprocesses claims text for comparison."""
-    try:
-        prompt = f"""For the following claims text, please extract each claim number. 
-        Then, segment each claim into sentences and extract important keywords to make it suitable for comparison.
-
-        ## Claims Text:
-        ```
-        {text}
-        ```
-
-        ## Preprocessed Result:
-        """
-        generation_config = genai.GenerationConfig(temperature=temperature)
-        response = model.generate_content(
-            prompt,
-            generation_config=generation_config
-        )
-        return response.text
-    except Exception as e:
-        st.error(f"Error occurred while preprocessing claims text with AI: {str(e)}")
+        st.error(f"AI를 사용한 텍스트 처리 중 오류 발생, 비밀번호가 정확한지 확인하고, 문서 양이 너무 큰지 확인해주세요: {str(e)}")
         return None
 
 def compare_texts(text1, text2, model, temperature=0.1):
-    """Compares two texts using AI and provides results in Korean."""
+    """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
     try:
         prompt = f"""
         Compare the following texts and evaluate the similarity.
@@ -86,27 +52,23 @@ def compare_texts(text1, text2, model, temperature=0.1):
         | 청구항 번호 | Included? | Similarity | Reasoning |
         |--------------|-----------|------------|-----------|
         | ...          | ...       | ...        | ...       |
-
+        
         Similarity Scale:
         - Very High (90-100%): Almost identical content
         - High (70-89%): Most key elements match
         - Medium (50-69%): Some key elements match
         - Low (30-49%): Few elements match
         - Very Low (0-29%): Almost no match
-
+        
         For each claim, briefly explain the reasoning behind your similarity judgment.
         After completing the table, summarize the overall similarity analysis results.
-
+        
         Please provide all results in Korean.
         """
-        generation_config = genai.GenerationConfig(temperature=temperature)
-        response = model.generate_content(
-            prompt,
-            generation_config=generation_config
-        )
+        response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        st.error(f"AI를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
+        st.error(f"AI를 사용한 텍스트 처리 중 오류 발생, 비밀번호가 정확한지 확인하고, 문서 양이 너무 큰지 확인해주세요: {str(e)}")
         return None
 
 
@@ -125,23 +87,8 @@ def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
     st.title("문서 비교 도구")
 
-    # 사용 방법 안내
-    st.markdown("""
-    ## 사용 방법:
-    1. 비교할 두 개의 파일을 업로드하거나 텍스트를 직접 입력합니다.
-    2. "비교 시작" 버튼을 클릭합니다.
-    3. 결과 창에서 두 문서의 유사도 분석 결과를 확인합니다.
-
-    ## 주의 사항:
-    * **초기 버전**: 현재 초기 버전이므로 오류가 발생할 수 있습니다.
-    * **이미지 인식 불가**: 화학식, 도면 등의 이미지는 인식하지 못할 수 있습니다. 텍스트 변환 후 사용하세요.
-    * **파일 크기 제한**: 외부 AI API를 이용하므로, 일정 용량 이상의 파일은 인식이 어려울 수 있습니다.
-    * **PDF 형식**: 스캔된 PDF 파일은 텍스트 추출이 제대로 되지 않을 수 있습니다. 
-    * **정확도**: AI 기반 분석 결과는 참고용이며, 법적/전문적인 판단을 대신할 수 없습니다. 
-    """)
-
     # API 키 입력
-    api_key = get_api_key()
+    api_key = get_api_key()  
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -159,8 +106,8 @@ def main():
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
-                prior_text = read_file(prior_file)
-                later_text = read_file(later_file)
+                prior_text = read_file(prior_file)  # 파일 객체 전달
+                later_text = read_file(later_file)  # 파일 객체 전달
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
                 later_text = later_text_input
@@ -171,15 +118,13 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리 (temperature=0.1 고정)
             with st.spinner("텍스트 전처리 중..."):
-                processed_prior_text = preprocess_specification(prior_text, model)
-                processed_later_text = preprocess_claims(later_text, model)
+                processed_prior_text = process_text_with_gemini(prior_text, model)
+                processed_later_text = process_text_with_gemini(later_text, model)
 
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행 (temperature=0.1 고정)
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
