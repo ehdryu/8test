@@ -48,8 +48,7 @@ def compare_texts(text1, text2, model):
         Text 2 (Later application claims):
         {text2}
 
-        Result format:
-        Please provide the results in the following table format (Please only display the claims from the text 2 in the table) :
+        Result format(only display the claims from the text 2 in the table) :
         | 청구항 번호 | Included? | Similarity | Reasoning |
         |--------------|-----------|------------|-----------|
         | ...          | ...       | ...        | ...       |
@@ -103,7 +102,7 @@ def main():
     if st.button("비교 시작"):
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-pro-001')
+            model = genai.GenerativeModel('gemini-1.5-flash-001')
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
