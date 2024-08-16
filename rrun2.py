@@ -23,7 +23,7 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
-def preprocess_specification(text, model, temperature=0.1):
+def preprocess_specification(text, model):
     """Preprocesses specification text for comparison."""
     try:
         prompt = f"""Please remove any metadata from the following specification text, such as patent number, filing date, etc. 
@@ -45,7 +45,7 @@ def preprocess_specification(text, model, temperature=0.1):
         st.error(f"Error occurred while preprocessing specification text with AI: {str(e)}")
         return None
 
-def preprocess_claims(text, model, temperature=0.1):
+def preprocess_claims(text, model):
     """Preprocesses claims text for comparison."""
     try:
         prompt = f"""For the following claims text, please extract each claim number. 
@@ -67,7 +67,7 @@ def preprocess_claims(text, model, temperature=0.1):
         st.error(f"Error occurred while preprocessing claims text with AI: {str(e)}")
         return None
 
-def compare_texts(text1, text2, model, temperature=0.1):
+def compare_texts(text1, text2, model):
     """Compares two texts using AI and provides results in Korean."""
     try:
         prompt = f"""
@@ -168,7 +168,7 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
-            # 텍스트 전처리 (temperature=0.1 고정)
+            # 텍스트 전처리 
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = preprocess_specification(prior_text, model)
                 processed_later_text = preprocess_claims(later_text, model)
@@ -176,7 +176,7 @@ def main():
             if processed_prior_text is None or processed_later_text is None:
                 return
 
-            # 비교 수행 (temperature=0.1 고정)
+            # 비교 수행 
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
