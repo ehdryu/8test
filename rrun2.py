@@ -39,21 +39,32 @@ def compare_texts(text1, text2, model):
     """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
     try:
         prompt = f"""
-        Compare the following texts and evaluate the similarity.
-        Indicate if each claim from Text 2 is included in Text 1.
-        Consider similar expressions/words as identical.
+        Compare the following patent documents and evaluate their similarity.
+        Determine if each claim from Text 2 is included in Text 1.
+        Consider similar expressions or words as identical.
+        
         Text 1 (Prior application specification):
         {text1}
-
+        
         Text 2 (Later application claims):
         {text2}
 
-        Result format:
-        | Later application claims | Included? | Similarity (Very High, High, Medium, Low, Very Low) |
-        |---|---|---|
-        | ...  | ...        | ...                                               |
-        Summarize the result table.
-        Please provide the results in Korean.
+        Please provide the results in the following table format:
+        | Claim Number | Claim Content | Included? | Similarity | Reasoning |
+        |--------------|---------------|-----------|------------|-----------|
+        | ...          | ...           | ...       | ...        | ...       |
+        
+        Similarity Scale:
+        - Very High (90-100%): Almost identical content
+        - High (70-89%): Most key elements match
+        - Medium (50-69%): Some key elements match
+        - Low (30-49%): Few elements match
+        - Very Low (0-29%): Almost no match
+        
+        For each claim, briefly explain the reasoning behind your similarity judgment.
+        After completing the table, summarize the overall similarity analysis results.
+        
+        Please provide all results in Korean.
         """
         response = model.generate_content(prompt)
         return response.text
