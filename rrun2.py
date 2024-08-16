@@ -65,8 +65,8 @@ def compare_texts(text1, text2, model):
 def get_api_key():
     """사용자로부터 API 키 앞, 뒷 부분을 입력받아 완성하는 함수"""
     api_key_middle = "zaSyBjhTX0EWpHXdvpYm9Dhk-fZFWLyU_"  # API 키 중간 부분
-    api_key_prefix = st.text_input("API 키 앞 부분을 입력하세요 (Al):", type="password")
-    api_key_suffix = st.text_input("API 키 뒷 부분을 입력하세요 (ghBU):", type="password")
+    api_key_prefix = st.text_input("API 키 앞 부분을 입력하세요:", type="password")
+    api_key_suffix = st.text_input("API 키 뒷 부분을 입력하세요:", type="password")
     return api_key_prefix + api_key_middle + api_key_suffix
 
 def main():
