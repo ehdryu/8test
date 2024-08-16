@@ -23,16 +23,6 @@ def read_file(file_object):
         st.error(f"파일을 읽는 동안 오류가 발생했습니다: {str(e)}")
         return None
 
-def extract_claims(text):
-    """텍스트에서 청구항 부분만 추출하는 함수 (예시)"""
-    # 구체적인 로직은 특허 문서 형식에 따라 다르게 구현 필요
-    claims_start = text.find("청구항 1.")  
-    claims_end = text.find("명세서")  # 또는 다른 구분자 사용
-    if claims_start != -1 and claims_end != -1:
-        return text[claims_start:claims_end]
-    else:
-        return ""  # 또는 오류 처리
-
 def process_text_with_gemini(text, model, instructions=""):
     """AI를 사용하여 텍스트를 비교에 적합하게 전처리합니다.
     추가적인 지시 사항을 instructions에 입력할 수 있습니다.
@@ -49,32 +39,21 @@ def compare_texts(text1, text2, model):
     """두 텍스트의 유사도를 AI를 이용하여 비교하고 결과를 한글로 제공합니다."""
     try:
         prompt = f"""
-        Compare the following patent documents and evaluate their similarity.
-        Determine if each claim from Text 2 is included in Text 1.
-        Consider similar expressions or words as identical.
-        
+        Compare the following texts and evaluate the similarity.
+        Indicate if each claim from Text 2 is included in Text 1.
+        Consider similar expressions/words as identical.
         Text 1 (Prior application specification):
         {text1}
-        
+
         Text 2 (Later application claims):
         {text2}
 
-        Please provide the results in the following table format:
-        | Claim Number | Included? | Similarity | Reasoning |
-        |--------------|-----------|------------|-----------|
-        | ...          | ...       | ...        | ...       |
-        
-        Similarity Scale:
-        - Very High (90-100%): Almost identical content
-        - High (70-89%): Most key elements match
-        - Medium (50-69%): Some key elements match
-        - Low (30-49%): Few elements match
-        - Very Low (0-29%): Almost no match
-        
-        For each claim, briefly explain the reasoning behind your similarity judgment.
-        After completing the table, summarize the overall similarity analysis results.
-        
-        Please provide all results in Korean.
+        Result format:
+        | Later application claims | Included? | Similarity (Very High, High, Medium, Low, Very Low) |
+        |---|---|---|
+        | ...  | ...        | ...                                               |
+        Summarize the result table.
+        Please provide the results in Korean.
         """
         response = model.generate_content(prompt)
         return response.text
@@ -122,26 +101,25 @@ def main():
             if prior_file and later_file:
                 prior_text = read_file(prior_file)  # 파일 객체 전달
                 later_text = read_file(later_file)  # 파일 객체 전달
-                later_claims = extract_claims(later_text) # 두 번째 문서에서 청구항 추출
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
-                later_claims = extract_claims(later_text_input)
+                later_text = later_text_input
             else:
                 st.error("두 텍스트를 모두 입력하거나 파일을 업로드하세요.")
                 return
 
-            if prior_text is None or later_claims is None:
+            if prior_text is None or later_text is None:
                 return
 
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
-                processed_later_claims = process_text_with_gemini(later_claims, model, additional_instructions)
+                processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
 
-            if processed_prior_text is None or processed_later_claims is None:
+            if processed_prior_text is None or processed_later_text is None:
                 return
 
             with st.spinner("비교 중..."):
-                comparison_result = compare_texts(processed_prior_text, processed_later_claims, model)
+                comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
             if comparison_result is None:
                 return
