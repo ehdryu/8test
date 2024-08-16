@@ -27,7 +27,7 @@ def extract_claims(text):
     """텍스트에서 청구항 부분만 추출하는 함수 (예시)"""
     # 구체적인 로직은 특허 문서 형식에 따라 다르게 구현 필요
     claims_start = text.find("청구항 1.")  
-    claims_end = text.find("명세서")  # 또는 다른 구분자 사용
+    claims_end = text.find("발명의 설명")  # 또는 다른 구분자 사용
     if claims_start != -1 and claims_end != -1:
         return text[claims_start:claims_end]
     else:
@@ -59,10 +59,10 @@ def compare_texts(text1, text2, model):
         Text 2 (Later application claims):
         {text2}
 
-        Please provide the results in the following table format:
-        | Claim Number | Claim Content | Included? | Similarity | Reasoning |
-        |--------------|---------------|-----------|------------|-----------|
-        | ...          | ...           | ...       | ...        | ...       |
+        Please provide the results in the following table format (Please only display the claims from the text 2 in the table) :
+        | Claim Number | Included? | Similarity | Reasoning |
+        |--------------|-----------|------------|-----------|
+        | ...          | ...       | ...        | ...       |
         
         Similarity Scale:
         - Very High (90-100%): Almost identical content
