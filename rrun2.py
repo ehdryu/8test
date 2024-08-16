@@ -122,8 +122,8 @@ def main():
                 return
 
             with st.spinner("텍스트 전처리 중..."):
-                processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
-                processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
+                processed_prior_text = process_text_with_gemini(prior_text, model)
+                processed_later_text = process_text_with_gemini(later_text, model)
 
             if processed_prior_text is None or processed_later_text is None:
                 return
