@@ -106,6 +106,7 @@ def main():
         try:
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-1.5-pro-001')
+            temperature=0.1
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
