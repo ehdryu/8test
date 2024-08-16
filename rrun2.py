@@ -59,7 +59,7 @@ def compare_texts(text1, text2, model):
         Text 2 (Later application claims):
         {text2}
 
-        Please provide the results in the following table format(Please only display the claims from the text 2 in the table):
+        Please provide the results in the following table format:
         | Claim Number | Included? | Similarity | Reasoning |
         |--------------|-----------|------------|-----------|
         | ...          | ...       | ...        | ...       |
