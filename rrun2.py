@@ -61,12 +61,20 @@ def compare_texts(text1, text2, model):
         st.error(f"Gemini API를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
         return None
 
+
+def get_api_key():
+    """사용자로부터 API 키 앞, 뒷 부분을 입력받아 완성하는 함수"""
+    api_key_middle = "zaSyBjhTX0EWpHXdvpYm9Dhk-fZFWLyU_"  # API 키 중간 부분
+    api_key_prefix = st.text_input("API 키 앞 부분을 입력하세요 (Al):", type="password")
+    api_key_suffix = st.text_input("API 키 뒷 부분을 입력하세요 (ghBU):", type="password")
+    return api_key_prefix + api_key_middle + api_key_suffix
+
 def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
     st.title("문서 비교 도구 (Google Gemini)")
 
     # API 키 입력
-    api_key = "잠시삭제"
+    api_key = get_api_key()  
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -81,42 +89,42 @@ def main():
 
     # 비교 실행 버튼
     if st.button("비교 시작"):
-            try:
-                genai.configure(api_key=api_key)
-                model = genai.GenerativeModel('gemini-pro')
+        try:
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-pro')
 
-                # 파일 또는 텍스트 입력 선택
-                if prior_file and later_file:
-                    prior_text = read_file(prior_file)  # 파일 객체 전달
-                    later_text = read_file(later_file)  # 파일 객체 전달
-                elif prior_text_input and later_text_input:
-                    prior_text = prior_text_input
-                    later_text = later_text_input
-                else:
-                    st.error("두 텍스트를 모두 입력하거나 파일을 업로드하세요.")
-                    return
+            # 파일 또는 텍스트 입력 선택
+            if prior_file and later_file:
+                prior_text = read_file(prior_file)  # 파일 객체 전달
+                later_text = read_file(later_file)  # 파일 객체 전달
+            elif prior_text_input and later_text_input:
+                prior_text = prior_text_input
+                later_text = later_text_input
+            else:
+                st.error("두 텍스트를 모두 입력하거나 파일을 업로드하세요.")
+                return
 
-                if prior_text is None or later_text is None:
-                    return
+            if prior_text is None or later_text is None:
+                return
 
-                with st.spinner("텍스트 전처리 중..."):
-                    processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
-                    processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
+            with st.spinner("텍스트 전처리 중..."):
+                processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
+                processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
 
-                if processed_prior_text is None or processed_later_text is None:
-                    return
+            if processed_prior_text is None or processed_later_text is None:
+                return
 
-                with st.spinner("비교 중..."):
-                    comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
+            with st.spinner("비교 중..."):
+                comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
-                if comparison_result is None:
-                    return
+            if comparison_result is None:
+                return
 
-                st.subheader("비교 결과:")
-                st.text(comparison_result)
+            st.subheader("비교 결과:")
+            st.text(comparison_result)
 
-            except Exception as e:
-                st.error(f"오류 발생: {str(e)}")
+        except Exception as e:
+            st.error(f"오류 발생: {str(e)}")
 
 if __name__ == "__main__":
     main()
