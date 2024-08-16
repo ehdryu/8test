@@ -109,22 +109,41 @@ def compare_texts(text1, text2, model, temperature=0.1):
         st.error(f"AI를 사용한 텍스트 비교 중 오류 발생: {str(e)}")
         return None
 
+
 def get_api_key():
     """사용자로부터 API 키 앞 2글자와 뒤 4글자를 입력받아 완성하는 함수"""
-    api_key_middle = "zaSyBjhTX0EWpHXdvpYm9Dhk-fZFWLyU_"  # API 키 중간 부분
-    user_input = st.text_input("비밀번호 6글자를 입력하세요(대소문자 구분!):", type="password")
-    if len(user_input) != 6:
-        st.error("비밀번호를 정확하게 입력해야 합니다.")
+    api_key_middle = "zaSy"  # API 키 중간 부분 (보안상 이 부분은 제거했습니다.)
+    user_input = st.text_input("API 키를 입력하세요:", type="password")
+    if len(user_input) != len(api_key_middle) + 6:
+        st.error("API 키를 정확하게 입력해야 합니다.")
         return None
     api_key_prefix = user_input[:2]  # 입력값에서 앞 2글자 추출
-    api_key_suffix = user_input[2:]  # 입력값에서 뒤 4글자 추출
+    api_key_suffix = user_input[-4:]  # 입력값에서 뒤 4글자 추출
     return api_key_prefix + api_key_middle + api_key_suffix
+
 def main():
     """Streamlit 웹 애플리케이션의 메인 함수"""
     st.title("문서 비교 도구")
 
+    # 사용 방법 안내
+    st.markdown("""
+    ## 사용 방법:
+    1. 비교할 두 개의 파일을 업로드하거나 텍스트를 직접 입력합니다.
+    2. "비교 시작" 버튼을 클릭합니다.
+    3. 결과 창에서 두 문서의 유사도 분석 결과를 확인합니다.
+
+    ## 주의 사항:
+    * **초기 버전**: 현재 초기 버전이므로 오류가 발생할 수 있습니다.
+    * **이미지 인식 불가**: 화학식, 도면 등의 이미지는 인식하지 못할 수 있습니다. 텍스트 변환 후 사용하세요.
+    * **파일 크기 제한**: 외부 AI API를 이용하므로, 일정 용량 이상의 파일은 인식이 어려울 수 있습니다.
+    * **PDF 형식**: 스캔된 PDF 파일은 텍스트 추출이 제대로 되지 않을 수 있습니다. 
+    * **정확도**: AI 기반 분석 결과는 참고용이며, 법적/전문적인 판단을 대신할 수 없습니다. 
+    """)
+
     # API 키 입력
-    api_key = get_api_key()  
+    api_key = get_api_key()
+    if api_key is None:
+        return
 
     # 파일 업로드
     prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
@@ -142,8 +161,8 @@ def main():
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
-                prior_text = read_file(prior_file)  # 파일 객체 전달
-                later_text = read_file(later_file)  # 파일 객체 전달
+                prior_text = read_file(prior_file)
+                later_text = read_file(later_file)
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
                 later_text = later_text_input
@@ -154,13 +173,15 @@ def main():
             if prior_text is None or later_text is None:
                 return
 
+            # 텍스트 전처리
             with st.spinner("텍스트 전처리 중..."):
-                processed_prior_text = process_text_with_gemini(prior_text, model)
-                processed_later_text = process_text_with_gemini(later_text, model)
+                processed_prior_text = preprocess_specification(prior_text, model)
+                processed_later_text = preprocess_claims(later_text, model)
 
             if processed_prior_text is None or processed_later_text is None:
                 return
 
+            # 비교 수행
             with st.spinner("비교 중..."):
                 comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
