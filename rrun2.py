@@ -52,8 +52,6 @@ def compare_texts(text1, text2, model):
         Please provide the results in the following table format (Please only display the claims from the text 2 in the table) :
         | 청구항 번호 | Included? | Similarity | Reasoning |
         |--------------|-----------|------------|-----------|
-        | 청구항 1          | ...       | ...        | ...       |
-        | 청구항 2          | ...       | ...        | ...       |
         | ...          | ...       | ...        | ...       |
         
         Similarity Scale:
