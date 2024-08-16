@@ -108,30 +108,29 @@ def main():
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel('gemini-pro')
 
-            # 파일 또는 텍스트 입력 선택
+           # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
                 prior_text = read_file(prior_file)  # 파일 객체 전달
                 later_text = read_file(later_file)  # 파일 객체 전달
-                later_claims = extract_claims(later_text) # 두 번째 문서에서 청구항 추출
             elif prior_text_input and later_text_input:
                 prior_text = prior_text_input
-                later_claims = extract_claims(later_text_input)
+                later_text = later_text_input
             else:
                 st.error("두 텍스트를 모두 입력하거나 파일을 업로드하세요.")
                 return
 
-            if prior_text is None or later_claims is None:
+            if prior_text is None or later_text is None:
                 return
 
             with st.spinner("텍스트 전처리 중..."):
                 processed_prior_text = process_text_with_gemini(prior_text, model, additional_instructions)
-                processed_later_claims = process_text_with_gemini(later_claims, model, additional_instructions)
+                processed_later_text = process_text_with_gemini(later_text, model, additional_instructions)
 
-            if processed_prior_text is None or processed_later_claims is None:
+            if processed_prior_text is None or processed_later_text is None:
                 return
 
             with st.spinner("비교 중..."):
-                comparison_result = compare_texts(processed_prior_text, processed_later_claims, model)
+                comparison_result = compare_texts(processed_prior_text, processed_later_text, model)
 
             if comparison_result is None:
                 return
