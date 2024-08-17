@@ -27,7 +27,7 @@ def preprocess_specification(text, model):
     """Preprocesses specification text for comparison."""
     try:
         prompt = f"""Please remove any metadata from the following specification text, such as patent number, filing date, etc. 
-        Then, segment the text into sentences, extract important keywords, and remove unnecessary sentences like background information to make it suitable for comparison.
+        Then, segment the text into sentences, extract important keywords to make it suitable for comparison.
 
         ## Specification Text:
         ```
@@ -46,7 +46,7 @@ def preprocess_claims(text, model):
     """Preprocesses claims text for comparison."""
     try:
         prompt = f"""For the following claims text, please extract each claim number. 
-        Then, segment each claim into sentences and extract important keywords to make it suitable for comparison.
+        Then, segment each claim into sentences and extract every keywords to make it suitable for comparison.
 
         ## Claims Text:
         ```
