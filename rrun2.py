@@ -118,6 +118,7 @@ def main():
     ## 사용 방법:
     1. 비교할 두 개의 파일(pdf 또는 txt 파일)을 업로드하거나 텍스트를 직접 입력합니다. 
        파일 업로드 시 kipris 또는 google patent 등에서 다운 받은 파일을 이용하세요. (마우스로 drag가 가능해야 함)
+       비교 대상 청구항 또는 후출원 파일 업로드 시, 청구항 부분만 추출하여 업로드할 필요는 없습니다. (다운받은 파일을 그대로 업로드하면 됩니다.)
     2. "비교 시작" 버튼을 클릭합니다.
     3. 결과 창에서 두 문서의 유사도 분석 결과를 확인합니다.
 
@@ -134,12 +135,12 @@ def main():
     api_key = get_api_key()
 
     # 파일 업로드
-    prior_file = st.file_uploader("비교 대상 명세서 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
-    later_file = st.file_uploader("비교 대상 청구항 (텍스트 2) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
+    prior_file = st.file_uploader("비교 대상 명세서 또는 선출원 (텍스트 1) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
+    later_file = st.file_uploader("비교 대상 청구항 또는 후출원 (텍스트 2) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
 
     # 텍스트 직접 입력
-    prior_text_input = st.text_area("비교 대상 명세서 (텍스트 1) 직접 입력", height=10)
-    later_text_input = st.text_area("비교 대상 청구항 (텍스트 2) 직접 입력", height=10)
+    prior_text_input = st.text_area("비교 대상 명세서 또는 선출원 (텍스트 1) 직접 입력", height=10)
+    later_text_input = st.text_area("비교 대상 청구항 또는 후출원 (텍스트 2) 직접 입력", height=10)
 
     # 비교 실행 버튼
     if st.button("비교 시작"):
