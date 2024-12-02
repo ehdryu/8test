@@ -148,7 +148,7 @@ def main():
     if st.button("비교 시작"):
         try:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-pro-001')
+            model = genai.GenerativeModel('gemini-1.5-flash')
 
             # 파일 또는 텍스트 입력 선택
             if prior_file and later_file:
