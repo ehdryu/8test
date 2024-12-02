@@ -141,7 +141,7 @@ def main():
     later_file = st.file_uploader("비교 대상 청구항 또는 후출원 (텍스트 2) 파일 업로드 (.pdf 또는 .txt)", type=['pdf', 'txt'])
 
     # 텍스트 직접 입력
-    prior_text_input = st.text_area("비교 대상 명세서 또는 선출원 (텍스트 1) 직접 입력", height=10)
+    prior_text_input = st.text_area("비교 대상 명세서 또는 선출원 (텍스트 1) 직접 입력", height=100)
     later_text_input = st.text_area("비교 대상 청구항 또는 후출원 (텍스트 2) 직접 입력", height=10)
 
     # 비교 실행 버튼
