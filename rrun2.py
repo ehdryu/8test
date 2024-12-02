@@ -100,7 +100,7 @@ def compare_texts(text1, text2, model):
 
 def get_api_key():
     """사용자로부터 API 키 앞 2글자와 뒤 4글자를 입력받아 완성하는 함수"""
-    api_key_middle = "zaSyD5J1oBKQguUTVEa86ZKzETZyT4Ag"  # API 키 중간 부분
+    api_key_middle = "zaSyD5Y73FLw_Rd6O0OoWpifsn7gexR6T"  # API 키 중간 부분
     user_input = st.text_input("비밀번호 6글자를 입력하세요(대소문자 구분!):", type="password")
     if len(user_input) != 6:
         st.error("비밀번호를 정확하게 입력해야 합니다.")
