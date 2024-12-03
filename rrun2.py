@@ -45,8 +45,8 @@ def preprocess_specification(text, model):
 def preprocess_claims(text, model):
     """Preprocesses claims text for comparison."""
     try:
-        prompt = f"""For the following claims text, please extract each claim numbers. 
-        Then, segment each claims into sentences and extract every keywords to make it suitable for comparison.
+        prompt = f"""For the following claims text, please extract each every claim numbers. 
+        Then, segment each every claims into sentences and extract every keywords to make it suitable for comparison.
 
         ## Claims Text:
         ```
