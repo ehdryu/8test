@@ -45,8 +45,8 @@ def preprocess_specification(text, model):
 def preprocess_claims(text, model):
     """Preprocesses claims text for comparison."""
     try:
-        prompt = f"""For the following claims text, please extract each claim number. 
-        Then, segment each claim into sentences and extract every keywords to make it suitable for comparison.
+        prompt = f"""For the following claims text, please extract each claim numbers. 
+        Then, segment each claims into sentences and extract every keywords to make it suitable for comparison.
 
         ## Claims Text:
         ```
@@ -86,7 +86,7 @@ def compare_texts(text1, text2, model):
         - Low (30-49%): Almost no match
         - Very Low (0-29%): no match
 
-        For each claim, briefly explain the reasoning behind your similarity judgment.
+        For each every claims, briefly explain the reasoning behind your similarity judgment.
         After completing the table, summarize the overall similarity analysis results.
 
         Please provide all results in Korean.
